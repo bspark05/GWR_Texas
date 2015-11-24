@@ -321,47 +321,39 @@ if __name__ == '__main__':
         rangeValue = rangeList[idx]
         print(rangeValue) 
           
-        i=1
-        while i<=12:
-            if i<10:
-                filename3 = filename1+'0'+str(i)
-            else:
-                filename3 = filename1+str(i)
-            i+=1    
-            filename = filename3+filename2
-            print(filename)
+        filename = filename1+filename2
                
-            lstFlds, dicAttr = pyFileIO.read_CSV(filename+".csv")    
-           
-            #print(dicAttr)
-            #print(lstFlds)
+        lstFlds, dicAttr = pyFileIO.read_CSV(filename+".csv")    
        
-               
-            fieldIndex = lstFlds.index(fieldname)
-               
-            xCoord = []
-            yCoord = []
-            attr1 = []
-               
-            for values in dicAttr.itervalues():
-                #print(values)
-                xCoord.append(values[2])
-                yCoord.append(values[3])
-                attr1.append(float(values[fieldIndex+1]))      
-              
-                     
-#             fig, ax = sig6_map1(xCoord, yCoord, attr1)
-               
-            fig, ax = value6_map1(xCoord, yCoord, attr1)
-             
-#             fig, ax = value6_map2(xCoord, yCoord, attr1, rangeValue)
-               
-            ax.set_xlabel(lstFlds[0])
-            ax.set_ylabel(lstFlds[1])
-            ax.axis('off')
-            ax.set_title(lstFlds[fieldIndex]+"_"+filename[13:-13])
-            fig.savefig("GWRresult/est_values2/"+filename3+"_"+lstFlds[fieldIndex]+".png")
-            print("save successfully")
+        #print(dicAttr)
+        #print(lstFlds)
+   
+           
+        fieldIndex = lstFlds.index(fieldname)
+           
+        xCoord = []
+        yCoord = []
+        attr1 = []
+           
+        for values in dicAttr.itervalues():
+            #print(values)
+            xCoord.append(values[2])
+            yCoord.append(values[3])
+            attr1.append(float(values[fieldIndex+1]))      
+          
+                 
+        fig, ax = sig6_map1(xCoord, yCoord, attr1)
+           
+#         fig, ax = value6_map1(xCoord, yCoord, attr1)
+         
+#         fig, ax = value6_map2(xCoord, yCoord, attr1, rangeValue)
+           
+        ax.set_xlabel(lstFlds[0])
+        ax.set_ylabel(lstFlds[1])
+        ax.axis('off')
+        ax.set_title(lstFlds[fieldIndex]+"_"+filename[:-9])
+        fig.savefig("GWRresult/t_values/"+filename+"_"+lstFlds[fieldIndex]+".png")
+        print("save successfully")
           
      
      
