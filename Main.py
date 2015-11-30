@@ -46,7 +46,7 @@ def sig6_map1(xCoord, yCoord, sList):
     value4 = 1.96
     value5 = 2.56
     
-    symbolSize=10
+    symbolSize=5
     
     s = np.asarray(sList)
     
@@ -121,7 +121,7 @@ def sig6_map1(xCoord, yCoord, sList):
 
 def value6_map1(xCoord, yCoord, sList):
     
-    symbolSize=10
+    symbolSize=5
     
     s = np.asarray(sList)
     
@@ -216,7 +216,7 @@ def value6_map1(xCoord, yCoord, sList):
 
 def value6_map2(xCoord, yCoord, sList, rangeValue):
     
-    symbolSize=10
+    symbolSize=5
     
     s = np.asarray(sList)
     
@@ -303,23 +303,151 @@ def value6_map2(xCoord, yCoord, sList, rangeValue):
     
     return fig, ax
 
+def map2(xCoord, yCoord, estValues, tValues):
+    
+    valueList = []
+
+    for ind, value in enumerate(xCoord):
+        tempArray = [float(value), float(yCoord[ind]), float(estValues[ind]), float(tValues[ind])]
+        valueList.append(tempArray)
+    
+    value1T = -1.96
+    value2T = 1.96
+
+
+    newValueList = []
+    index = 0 
+    for value in valueList:
+        if (value[3] > value2T) or (value[3] < value1T):
+            newValueList.append(value)
+            index+=1
+    
+    newxCoord = []
+    newyCoord = []
+    newEstValues = []
+    newTValues = []
+    
+    for newValue in newValueList:
+        newxCoord.append(newValue[0])
+        newyCoord.append(newValue[1])
+        newEstValues.append(newValue[2])
+        newTValues.append(newValue[3])
+    
+    symbolSize=5
+      
+    sEst = np.asarray(newEstValues)
+    
+    
+    s = np.asarray(estValues)
+    
+    maxValue = np.amax(s)
+    minValue = np.amin(s)
+    
+    if abs(maxValue) >= abs(minValue):
+        absRange = abs(maxValue)
+    else:
+        absRange = abs(minValue)
+      
+    value1 = -(absRange/3*2)
+    value2 = -(absRange/3)
+    value3 = 0
+    value4 = absRange/3
+    value5 = absRange/3*2
+      
+    group1Est = np.ma.masked_where(sEst > value1, sEst)
+    group2Est = np.ma.masked_where(np.logical_or(sEst< value1, sEst> value2), sEst)
+    group3Est = np.ma.masked_where(np.logical_or(sEst< value2, sEst> value3), sEst)
+    group4Est = np.ma.masked_where(np.logical_or(sEst< value3, sEst> value4), sEst)
+    group5Est = np.ma.masked_where(np.logical_or(sEst< value4, sEst> value5), sEst)
+    group6Est = np.ma.masked_where(sEst < value5, sEst)
+      
+      
+    oneGroup1Est = []
+    oneGroup2Est = []
+    oneGroup3Est = []
+    oneGroup4Est = []
+    oneGroup5Est = []
+    oneGroup6Est = []
+      
+    for grp1 in group1Est:
+        if grp1 !='--':
+            oneGroup1Est.append(symbolSize)
+        else:
+            oneGroup1Est.append(0)
+      
+    for grp2 in group2Est:
+        if grp2 !='--':
+            oneGroup2Est.append(symbolSize)
+        else:
+            oneGroup2Est.append(0)
+      
+    for grp3 in group3Est:
+        if grp3 !='--':
+            oneGroup3Est.append(symbolSize)
+        else:
+            oneGroup3Est.append(0)
+      
+    for grp4 in group4Est:
+        if grp4 !='--':
+            oneGroup4Est.append(symbolSize)
+        else:
+            oneGroup4Est.append(0)
+              
+    for grp5 in group5Est:
+        if grp5 !='--':
+            oneGroup5Est.append(symbolSize)
+        else:
+            oneGroup5Est.append(0)
+              
+    for grp6 in group6Est:
+        if grp6 !='--':
+            oneGroup6Est.append(symbolSize)
+        else:
+            oneGroup6Est.append(0)
+      
+      
+    legendValue1 = str(round(value1,2))
+    legendValue2 = str(round(value2,2))
+    legendValue3 = str(round(value3,2))
+    legendValue4 = str(round(value4,2))
+    legendValue5 = str(round(value5,2))
+              
+              
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(1,1,1)
+  
+    ax.scatter(newxCoord,newyCoord, s= oneGroup1Est, c='#3300CC', edgecolor='none', label = '~' + legendValue1)
+    ax.scatter(newxCoord,newyCoord, s= oneGroup2Est, c='#3333FF', edgecolor='none', label = legendValue1 + '~' + legendValue2)
+    ax.scatter(newxCoord,newyCoord, s= oneGroup3Est, c='#33CCFF', edgecolor='none', label = legendValue2 + '~' + legendValue3)
+      
+    ax.scatter(newxCoord,newyCoord, s= oneGroup4Est, c='#FFCC00', edgecolor='none', label = legendValue3 + '~' + legendValue4)
+    ax.scatter(newxCoord,newyCoord, s= oneGroup5Est, c='#FF6600', edgecolor='none', label = legendValue4 + '~' + legendValue5)
+    ax.scatter(newxCoord,newyCoord, s= oneGroup6Est, c='#FF0000', edgecolor='none', label = legendValue5 + '~')
+      
+    ax.legend(loc='upper left', numpoints=6, ncol=3, fontsize=9, bbox_to_anchor=(0, 0))
+      
+    return fig, ax
+
 if __name__ == '__main__':
     
-#     filename1 = "SaleApartment2014"
-#     filename2 = "_GWR_listwise"
     filename1 = "_8_Urban_texas"
     filename2 = "_listwise"
 
     
-#     fieldnameList = ['Intercept', 'AGE', 'COMPLEX', 'COMDIST', 'SUBWAY', 'MAJROAD', 'AGEAVE', 'POPDEN', 'BLSPOPF', 'FIRENO', 'CAR2012R', 'TAX', 'AREA_1', 'FLOOR1_1']     
-    rangeList = [7.00, 0.2, 0.13, 0.1, 0.1, 0.06, 3.6, 0.3, 12, 0.01, 1.16, 0.31, 0.71, 0.11]
-    
     fieldnameList = ['Intercept', 'WHITE', 'HISP', 'BLWPOV', 'MEDINC', 'UPTOHIGH', 'INS', 'MEDICARE', 'MEDICAID','Male', 'POPDEN']
     
-    for idx, field in enumerate(fieldnameList):
-        fieldname = 'est_'+field
-        rangeValue = rangeList[idx]
-        print(rangeValue) 
+#     fieldnameList_t = ['std_residual']
+    fieldnameList_t = []
+    fieldnameList_est = []
+    
+    for fieldname in fieldnameList:
+        fieldname_t = 't_'+fieldname
+        fieldname_est = 'est_'+fieldname
+        fieldnameList_t.append(fieldname_t)
+        fieldnameList_est.append(fieldname_est)
+    
+    #change fieldnameList 
+    for indx, fieldname in enumerate(fieldnameList_t):
           
         filename = filename1+filename2
                
@@ -341,20 +469,37 @@ if __name__ == '__main__':
             yCoord.append(values[3])
             attr1.append(float(values[fieldIndex+1]))      
           
+        fieldIndex1 = lstFlds.index('es'+fieldname)
+         
+        attr2 = []
+         
+        for values1 in dicAttr.itervalues():
+             
+            attr2.append(float(values1[fieldIndex1+1])) 
+            
+            
                  
-        fig, ax = sig6_map1(xCoord, yCoord, attr1)
+        #change function
+            # part 1-1 : visualization of t-values         
+#         fig, ax = sig6_map1(xCoord, yCoord, attr1)
            
 #         fig, ax = value6_map1(xCoord, yCoord, attr1)
          
 #         fig, ax = value6_map2(xCoord, yCoord, attr1, rangeValue)
+
+        fig, ax = map2(xCoord, yCoord, attr2, attr1)
            
         ax.set_xlabel(lstFlds[0])
         ax.set_ylabel(lstFlds[1])
         ax.axis('off')
-        ax.set_title(lstFlds[fieldIndex]+"_"+filename[:-9])
-        fig.savefig("GWRresult/t_values/"+filename+"_"+lstFlds[fieldIndex]+".png")
+        
+        #change path 
+        ax.set_title(lstFlds[fieldIndex][2:]+"_"+filename[:-9])
+        fig.savefig("GWRresult/est_values1/"+filename+"_"+lstFlds[fieldIndex]+".png")
         print("save successfully")
           
+     
+     ## PART 2 - creating gif file 
      
      
      
@@ -364,7 +509,9 @@ if __name__ == '__main__':
 #     filepath3 = 'GWRresult/gif1/'
 #     fileDir = os.path.join(os.path.dirname(__file__), filepath2)
 #     #print fileDir
-#       
+#
+#
+#     #change fieldnameList 
 #     for field in fieldnameList:
 #         os.chdir(filepath1+filepath2)
 #         os.getcwd()
